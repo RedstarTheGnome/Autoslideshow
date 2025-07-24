@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Slideshow</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    img {
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <img id="slideshow" src="" alt="Slideshow Image">
+  <script>
+    let images = [];
+    let index = 0;
+
+    async function fetchImages() {
+      const res = await fetch('/images');
+      images = await res.json();
+    }
+
+    async function showNextImage() {
+      if (images.length === 0) return;
+      document.getElementById('slideshow').src = images[index % images.length];
+      index++;
+    }
+
+    async function startSlideshow() {
+      await fetchImages();
+      setInterval(showNextImage, 3000);        // Show next image every 3s
+      setInterval(fetchImages, 5000);          // Refresh image list every 5s
+    }
+
+    window.onload = startSlideshow;
+  </script>
+</body>
+</html>
