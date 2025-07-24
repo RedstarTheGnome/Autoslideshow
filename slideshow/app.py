@@ -3,8 +3,8 @@ import os
 
 app = Flask(__name__)
 
-#IMAGE_FOLDER = 'static/images'
-IMAGE_FOLDER = r'G:\My Drive\static\images'
+
+IMAGE_FOLDER = r'G:\My Drive\static\images' #ammend to picture folder
 ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp'}
 
 @app.route('/')
