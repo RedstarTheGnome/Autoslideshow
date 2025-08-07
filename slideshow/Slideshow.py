@@ -6,6 +6,9 @@ import sys
 import os 
 
 master = tk.Tk()
+
+
+
 flask_process = None
 e1 = tk.Entry(master)
 
@@ -36,11 +39,21 @@ def startShow():
     except Exception as e:
         messagebox.showerror("Error", f"Failed to start slideshow: {e}")
 
+
+
+#Tkinter box 
+
+
 master.title('Auto Slideshow')
-tk.Label(master, text='Enter Image file path').grid(row=0)
-e1.grid(row=0, column=1)
+
+info1 = Label(master, text ="Welcome to the Auto slide show, ")
+info2= Label(master, text="Please enter the image's location as a file path")
+info1.grid(row=1,column=0)
+info2.grid(row=2,column=0)
+tk.Label(master, text='Enter Image file path:').grid(row=0)
+e1.grid(row=3, column=0)
 
 button = tk.Button(master, text='Start Slideshow', width=25, command= startShow)
-button.place(x=50,y=50)
-
+button.grid(row=4, column=0)
+master.geometry("300x200")
 master.mainloop()
