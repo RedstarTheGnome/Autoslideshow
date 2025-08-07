@@ -91,7 +91,7 @@ browse_button.grid(row=3, column=1, padx=10, pady=5)
 tk.Label(master, text="Time in Seconds:").grid(row=4, column=0, sticky="w", padx=10, pady=(10, 0))
 e2.grid(row=5, column=0, padx=10, pady=(0, 5), sticky="w")
 e2.insert(0, "3")
-tk.Label(master, text="Refresh Time in Minutes:").grid(row=4, column=1, sticky="w", padx=10, pady=(10, 0))
+tk.Label(master, text="Refresh Time in Minutes:").grid(row=4, column=1, sticky="w", padx=5, pady=(10, 0))
 e3.grid(row=5, column=1, padx=10, pady=(0, 5), sticky="w")
 e3.insert(0, "5")
 
