@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 
 
-IMAGE_FOLDER = r 'G:\Shared drives\Screen\staticimages' #ammend to picture folder
+IMAGE_FOLDER = r'G:\Shared drives\Screen\static\images' #ammend to picture folder
 ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp'}
 
 @app.route('/')
