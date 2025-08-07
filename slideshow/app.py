@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 IMAGE_FOLDER = r'G:\Shared drives\Screen\static\images' #ammend to picture folder
-ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', 'WebP'}
+ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.WebP'}
 
 @app.route('/')
 def index():
