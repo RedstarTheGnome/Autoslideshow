@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
+import os
 master = tk.Tk()
 
-def hello():
-    msg=messagebox.showinfo("hello")
+def startShow():
+    os.system("python slideshow/app.py" )
 
 master.title('Auto Slideshow')
 
@@ -14,7 +15,7 @@ e1.grid(row=0, column=1)
 
 
 
-button = tk.Button(master, text='Start Slideshow', width=25, command= hello)
+button = tk.Button(master, text='Start Slideshow', width=25, command= startShow)
 button.place(x=50,y=50)
 
 
