@@ -3,7 +3,8 @@ from tkinter import *
 from tkinter import messagebox
 import subprocess
 import sys
-import os 
+import os
+import webbrowser
 
 master = tk.Tk()
 
@@ -36,8 +37,11 @@ def startShow():
         flask_process = subprocess.Popen([python_executable, app_path, image_path])
         print(f"Flask server started with path: {image_path}")
         messagebox.showinfo("Success", "Slideshow server started!")
+        webbrowser.open('http://127.0.0.1:5000/')
     except Exception as e:
         messagebox.showerror("Error", f"Failed to start slideshow: {e}")
+    
+
 
 
 
