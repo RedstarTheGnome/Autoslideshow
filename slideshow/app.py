@@ -10,7 +10,7 @@ if len(sys.argv) > 1:
     IMAGE_FOLDER = sys.argv[1]
 else:
     # Use a default path if no parameter is provided
-    IMAGE_FOLDER = r'G:\Shared drives\Screen\static\images'
+    IMAGE_FOLDER = r'static\images'
 
 app = Flask(__name__)
 ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.WebP'}
