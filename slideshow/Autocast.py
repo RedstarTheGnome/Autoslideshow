@@ -67,7 +67,8 @@ def restart_cast():
     log.info("Cast successfully started.")
     
     # Clean up the browser discovery resources
-    pychromecast.discovery.stop_discovery(browser)
+    # This has been updated to use the non-deprecated method.
+    browser.stop_discovery()
     log.info("Restart complete. Waiting for the next scheduled restart.")
     
     return True
