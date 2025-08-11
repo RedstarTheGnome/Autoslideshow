@@ -8,6 +8,7 @@ import webbrowser
 import threading
 import time
 import logging
+import socket # Import the socket library
 
 # Set up logging for the script to see what's happening
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,11 +23,20 @@ e3 = tk.Entry(master, width=10) # Refresh time input
 
 # --- CONFIGURATION FOR CATT ---
 # The full path to the catt.exe executable.
-# IMPORTANT: This path must be correct for your system.
 CATT_PATH = r"C:\Users\JordanRedpath\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\Scripts\catt.exe"
 
-# The URL of your locally hosted webpage.
-URL_TO_CAST = "http://10.66.0.38:5000/" 
+# Dynamically get the local IPv4 address and set the URL
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80)) # Connect to an external host to find the local IP
+    local_ip = s.getsockname()[0]
+    s.close()
+    URL_TO_CAST = f"http://{local_ip}:5000/"
+except Exception as e:
+    log.error(f"Could not determine local IP address: {e}")
+    # Fallback to a common local IP if an error occurs
+    URL_TO_CAST = "http://127.0.0.1:5000/"
+
 CHROMECAST_DEVICE_NAME = "Entryway TV"
 # --- END CONFIGURATION ---
 
@@ -128,7 +138,6 @@ def startShow():
         webbrowser.open('http://127.0.0.1:5000/')
     except Exception as e:
         messagebox.showerror("Error", f"Failed to start slideshow: {e}")
-
 
 # --- Tkinter GUI Setup ---
 master.title('Auto Slideshow')
