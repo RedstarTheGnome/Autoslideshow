@@ -5,6 +5,13 @@ import subprocess
 import sys
 import os
 import webbrowser
+import threading
+import time
+import logging
+
+# Set up logging for the script to see what's happening
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+log = logging.getLogger(__name__)
 
 master = tk.Tk()
 
@@ -13,6 +20,16 @@ e1 = tk.Entry(master, width=50) # Image folder path
 e2 = tk.Entry(master, width=10) # Time input
 e3 = tk.Entry(master, width=10) # Refresh time input
 
+# --- CONFIGURATION FOR CATT ---
+# The full path to the catt.exe executable.
+# IMPORTANT: This path must be correct for your system.
+CATT_PATH = r"C:\Users\JordanRedpath\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\Scripts\catt.exe"
+
+# The URL of your locally hosted webpage.
+URL_TO_CAST = "http://10.66.0.38:5000/" 
+CHROMECAST_DEVICE_NAME = "Entryway TV"
+# --- END CONFIGURATION ---
+
 def browse_folder():
     """Opens a file dialog to select a folder and inserts the path into e1."""
     folder_path = filedialog.askdirectory()
@@ -20,8 +37,47 @@ def browse_folder():
         e1.delete(0, END)
         e1.insert(0, folder_path)
 
+def run_catt_command(refresh_time_minutes):
+    """
+    Constructs and runs the catt command, then sleeps for the specified time.
+    This function is designed to run in a loop within a separate thread.
+    """
+    log.info("Starting the cast refresh")
+
+    wait_time_seconds = int(refresh_time_minutes) * 60
+
+    while True:
+        try:
+            log.info("Starting the cast process with catt...")
+            
+            command = [
+                CATT_PATH,
+                "cast_site",
+                URL_TO_CAST
+            ]
+
+            env = os.environ.copy()
+            env["CATT_DEVICE"] = CHROMECAST_DEVICE_NAME
+            
+            log.info(f"Running command: {command}")
+            subprocess.run(command, env=env, check=True)
+            log.info("Catt command executed successfully.")
+
+        except subprocess.CalledProcessError as e:
+            log.error(f"Failed to run catt command. Error code: {e.returncode}")
+            log.error(f"Error output:\n{e.stderr}")
+            # Do not break here so the loop can retry
+        except FileNotFoundError:
+            log.error(f"Catt executable not found at: {CATT_PATH}. Please check the path.")
+            break # Exit the loop if the executable is not found.
+        except Exception as e:
+            log.error(f"An unexpected error occurred: {e}", exc_info=True)
+
+        log.info(f"Cast complete. Waiting for {refresh_time_minutes} minutes before next refresh...")
+        time.sleep(wait_time_seconds)
+
 def startShow():
-    """Starts the Flask server with the specified image path and timings."""
+    """Starts the Flask server and the autocast script in separate threads."""
     global flask_process
     image_path = e1.get()
     time_str = e2.get()
@@ -35,11 +91,10 @@ def startShow():
         messagebox.showerror("Error", "The entered path is not a valid directory.")
         return
 
-    # Validate that time and refresh time are valid numbers
     try:
         # Use default values if the fields are empty
-        time = int(time_str) if time_str else 3000
-        refresh_time = int(refresh_time_str) if refresh_time_str else 5000
+        time_seconds = int(time_str) if time_str else 3
+        refresh_time_minutes = int(refresh_time_str) if refresh_time_str else 5
     except ValueError:
         messagebox.showerror("Error", "Time and Refresh Time must be valid numbers.")
         return
@@ -53,24 +108,27 @@ def startShow():
             messagebox.showerror("Error", f"Could not find app.py at {app_path}")
             return
             
-        # Pass all parameters as command-line arguments.
-        # sys.argv[0] will be app_path,
-        # sys.argv[1] will be image_path,
-        # sys.argv[2] will be the time,
-        # and sys.argv[3] will be the refresh_time.
+        # Start the Flask server process
         flask_process = subprocess.Popen([
             python_executable, 
             app_path, 
             image_path, 
-            str(time), 
-            str(refresh_time)
+            str(time_seconds), 
+            str(refresh_time_minutes)
         ])
         
-        print(f"Flask server started with path: {image_path}, time: {time}, refresh: {refresh_time}")
+        print(f"Flask server started with path: {image_path}, time: {time_seconds}, refresh: {refresh_time_minutes}")
         messagebox.showinfo("Success", "Slideshow server started!")
+        
+        # Start the catt command in a new thread.
+        # We pass the refresh_time_minutes from the GUI.
+        threading.Thread(target=run_catt_command, args=(refresh_time_minutes,), daemon=True).start()
+        
+        # This will open the page on the local machine's browser, not cast it.
         webbrowser.open('http://127.0.0.1:5000/')
     except Exception as e:
         messagebox.showerror("Error", f"Failed to start slideshow: {e}")
+
 
 # --- Tkinter GUI Setup ---
 master.title('Auto Slideshow')

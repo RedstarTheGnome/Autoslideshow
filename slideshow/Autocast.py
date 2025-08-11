@@ -2,6 +2,7 @@ import time
 import subprocess
 import logging
 import os
+import sys
 
 # Set up logging for the script to see what's happening
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -13,9 +14,10 @@ log = logging.getLogger(__name__)
 CATT_PATH = r"C:\Users\JordanRedpath\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\Scripts\catt.exe"
 
 # The URL of your locally hosted webpage.
-URL_TO_CAST = "http://127.0.0.1:5000/"
+URL_TO_CAST = "http://10.66.0.38:5000/"
 
 # The time to wait between refreshes, in seconds.
+# 3 hours = 3 * 60 * 60 = 10800 seconds.
 WAIT_TIME_SECONDS = 10800 
 
 # The name of your Chromecast device.
