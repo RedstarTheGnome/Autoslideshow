@@ -8,7 +8,7 @@ import webbrowser
 import threading
 import time
 import logging
-import socket # Import the socket library
+import socket
 
 # Set up logging for the script to see what's happening
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -131,7 +131,6 @@ def startShow():
         messagebox.showinfo("Success", "Slideshow server started!")
         
         # Start the catt command in a new thread.
-        # We pass the refresh_time_minutes from the GUI.
         threading.Thread(target=run_catt_command, args=(refresh_time_minutes,), daemon=True).start()
         
         # This will open the page on the local machine's browser, not cast it.
