@@ -8,16 +8,9 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 # --- CONFIGURATION ---
-# Replace 'Your Chromecast Name' with the exact name of your Chromecast.
-# You can find this name in the Google Home app.
+
 CHROMECAST_NAME = "Entryway TV"
-
-# Replace 'http://your-url-here.com' with the full URL of the media you want to cast.
-# Make sure this is a URL that the Chromecast's default media receiver can play.
-URL_TO_CAST = "http://your-url-here.com"
-
-# The time to wait between restarts, in seconds.
-# 3 hours = 3 * 60 * 60 = 10800 seconds.
+URL_TO_CAST = "http://127.0.0.1:5000/"
 WAIT_TIME_SECONDS = 10800 
 # --- END CONFIGURATION ---
 
@@ -45,9 +38,6 @@ def restart_cast():
 
     # Get the media controller
     mc = cast.media_controller
-
-    # We use a try-except block to handle the case where no media is currently playing.
-    # This prevents the script from crashing if it tries to stop a non-existent session.
     try:
         log.info("Attempting to stop current media...")
         mc.stop()
@@ -58,8 +48,6 @@ def restart_cast():
     
     # Start the new cast with the specified URL
     log.info(f"Starting new cast with URL: {URL_TO_CAST}")
-    # For a web page or image, you can often use a generic content_type like 'video/mp4' as a placeholder.
-    # The Chromecast's default receiver is usually smart enough to figure it out.
     mc.play_media(URL_TO_CAST, "video/mp4")
     
     # Give the cast a moment to start
@@ -67,7 +55,6 @@ def restart_cast():
     log.info("Cast successfully started.")
     
     # Clean up the browser discovery resources
-    # This has been updated to use the non-deprecated method.
     browser.stop_discovery()
     log.info("Restart complete. Waiting for the next scheduled restart.")
     
