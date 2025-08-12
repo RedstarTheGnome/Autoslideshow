@@ -11,29 +11,21 @@ import logging
 import socket
 import shutil
 
-# --- START: New code to automatically install dependencies ---
+# automatically install dependencies ---
 
 def install_dependencies():
-    """
-    Checks for required dependencies (Flask and catt) and installs them
-    if they are not already present.
-    """
+    #Checks for required dependencies (Flask and catt) and installs them
     dependencies = ["Flask", "catt"]
     
     # Define a set of the imported modules to quickly check if a module is loaded
     imported_modules = set(sys.modules.keys())
-
     for package in dependencies:
         try:
             # Check if the package is already imported or available
             if package == "Flask":
                 import flask
             elif package == "catt":
-                # catt is not a module, but a command-line tool.
-                # We can't import it, so we'll just check for its existence later
-                # and assume it needs to be installed if we get an error there.
                 continue
-            
             # If the import succeeds, the package is already installed.
             logging.info(f"Dependency '{package}' is already installed.")
 
@@ -47,16 +39,12 @@ def install_dependencies():
             except subprocess.CalledProcessError as e:
                 logging.error(f"Failed to install '{package}'. Please install it manually. Error: {e}")
                 messagebox.showerror("Installation Error", f"Failed to install '{package}'. Please try running 'pip install {package}' from your terminal.")
-                sys.exit(1) # Exit if a critical dependency fails to install
+                sys.exit(1) 
 
     # Specifically check for catt.exe since it's a command line tool.
-    # The original code already has logic for this, so we don't need to add new checks here.
     logging.info("All dependencies have been checked.")
-
-# Call the function to ensure dependencies are installed before the rest of the script runs.
 install_dependencies()
 
-# --- END: New code to automatically install dependencies ---
 
 # Set up logging for the script to see what's happening
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -70,7 +58,6 @@ e2 = tk.Entry(master, width=10) # Time input
 e3 = tk.Entry(master, width=10) # Refresh time input
 
 # --- CONFIGURATION FOR CATT ---
-# The full path to the catt.exe executable.
 CATT_PATH = shutil.which("catt")
 
 if not CATT_PATH:
@@ -96,17 +83,14 @@ CHROMECAST_DEVICE_NAME = "Entryway TV"
 # --- END CONFIGURATION ---
 
 def browse_folder():
-    """Opens a file dialog to select a folder and inserts the path into e1."""
+    #Opens a file dialog to select a folder and inserts the path into e1.#
     folder_path = filedialog.askdirectory()
     if folder_path:
         e1.delete(0, END)
         e1.insert(0, folder_path)
 
 def run_catt_command(refresh_time_minutes):
-    """
-    Constructs and runs the catt command, then sleeps for the specified time.
-    This function is designed to run in a loop within a separate thread.
-    """
+    #Constructs and runs the catt command, then sleeps for the specified time.
     log.info("Starting the cast refresh")
 
     wait_time_seconds = int(refresh_time_minutes) * 60
