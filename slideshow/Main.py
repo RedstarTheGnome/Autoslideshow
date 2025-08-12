@@ -9,6 +9,54 @@ import threading
 import time
 import logging
 import socket
+import shutil
+
+# --- START: New code to automatically install dependencies ---
+
+def install_dependencies():
+    """
+    Checks for required dependencies (Flask and catt) and installs them
+    if they are not already present.
+    """
+    dependencies = ["Flask", "catt"]
+    
+    # Define a set of the imported modules to quickly check if a module is loaded
+    imported_modules = set(sys.modules.keys())
+
+    for package in dependencies:
+        try:
+            # Check if the package is already imported or available
+            if package == "Flask":
+                import flask
+            elif package == "catt":
+                # catt is not a module, but a command-line tool.
+                # We can't import it, so we'll just check for its existence later
+                # and assume it needs to be installed if we get an error there.
+                continue
+            
+            # If the import succeeds, the package is already installed.
+            logging.info(f"Dependency '{package}' is already installed.")
+
+        except ImportError:
+            logging.warning(f"Dependency '{package}' not found. Installing now...")
+            try:
+                # Use subprocess to run the pip install command.
+                # `sys.executable` ensures we use the same Python interpreter.
+                subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+                logging.info(f"Successfully installed '{package}'.")
+            except subprocess.CalledProcessError as e:
+                logging.error(f"Failed to install '{package}'. Please install it manually. Error: {e}")
+                messagebox.showerror("Installation Error", f"Failed to install '{package}'. Please try running 'pip install {package}' from your terminal.")
+                sys.exit(1) # Exit if a critical dependency fails to install
+
+    # Specifically check for catt.exe since it's a command line tool.
+    # The original code already has logic for this, so we don't need to add new checks here.
+    logging.info("All dependencies have been checked.")
+
+# Call the function to ensure dependencies are installed before the rest of the script runs.
+install_dependencies()
+
+# --- END: New code to automatically install dependencies ---
 
 # Set up logging for the script to see what's happening
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -23,7 +71,14 @@ e3 = tk.Entry(master, width=10) # Refresh time input
 
 # --- CONFIGURATION FOR CATT ---
 # The full path to the catt.exe executable.
-CATT_PATH = r"C:\Users\JordanRedpath\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\Scripts\catt.exe"
+CATT_PATH = shutil.which("catt")
+
+if not CATT_PATH:
+    log.error("Catt executable not found in system's PATH. Please ensure it is installed correctly.")
+    # You might want to handle this error by disabling the cast functionality
+    # or exiting the program gracefully.
+else:
+    log.info(f"Catt executable found at: {CATT_PATH}")
 
 # Dynamically get the local IPv4 address and set the URL
 try:
