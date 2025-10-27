@@ -13,7 +13,7 @@ else:
     IMAGE_FOLDER = r'static\images'
 
 app = Flask(__name__)
-ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.WebP'}
+ALLOWED_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.WebP', '.HEIC'}
 
 @app.route('/')
 def index():
